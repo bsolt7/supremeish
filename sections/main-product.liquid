@@ -73,7 +73,7 @@
         <!-- Dropdowns -->
         <div style="display: flex; flex-direction: column; gap: 10px;">
           {% for option in product.options_with_values %}
-            <div class="option-wrapper option-{{ option.name | handleize }}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
               <label style="font-size: 12px;">{{ option.name }}</label>
               <select class="single-option-selector" name="options[{{ option.name }}]">
                 {% for value in option.values %}
@@ -83,17 +83,6 @@
             </div>
           {% endfor %}
         </div>
-
-        <!-- Size boxes -->
-        {% for option in product.options_with_values %}
-          {% if option.name == 'Size' %}
-            <div class="size-options" style="display:flex; gap:5px; flex-wrap:wrap; margin:10px 0;">
-              {% for value in option.values %}
-                <span class="size-option" data-value="{{ value }}" style="padding:6px 10px; border:1px solid black; font-size:12px; text-transform:uppercase; cursor:pointer;">{{ value }}</span>
-              {% endfor %}
-            </div>
-          {% endif %}
-        {% endfor %}
 
         <!-- Buttons -->
         <div style="display: flex; gap: 10px; margin-top: 10px;">
@@ -158,18 +147,5 @@
 .single-option-selector:hover {
   background-color: black;
   color: white;
-}
-
-/* Size selection */
-.size-option.active {
-  background: black;
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .option-color,
-  .option-size {
-    display: none;
-  }
 }
 </style>
