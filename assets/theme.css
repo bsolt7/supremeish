@@ -7,6 +7,9 @@ body {
   color: var(--text_color, #000000);
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   opacity: 0;
   transition: opacity 0.5s ease;
 }
@@ -187,6 +190,7 @@ a {
   gap: 40px;
   padding: 20px;
   flex-wrap: wrap;
+  flex: 1;
 }
 
 .collection-sidebar {
@@ -201,6 +205,12 @@ a {
   max-height: calc(100vh - 120px);
   overflow-y: auto;
   padding-right: 10px;
+}
+
+body.mobile .collection-grid-wrapper {
+  max-height: none;
+  overflow-y: visible;
+  padding-right: 0;
 }
 
 /* ============================
@@ -269,16 +279,91 @@ a {
 /* ============================
    📱 Mobile Specific Styles
 ============================ */
-body.mobile #Sidebar {
+body.mobile #Sidebar,
+body.tablet #Sidebar {
   display: none;
 }
 
-body.mobile .collection-page {
+body.mobile .collection-page,
+body.tablet .collection-page {
   flex-direction: column;
   padding: 20px;
 }
 
-body.mobile .collection-grid {
+body.mobile header,
+body.tablet header {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+body.mobile header img,
+body.tablet header img {
+  max-width: 120px !important;
+}
+
+body.mobile #date-time-display,
+body.tablet #date-time-display {
+  display: none;
+}
+
+body.mobile .collection-grid,
+body.tablet .collection-grid {
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
 }
+
+/* Mobile drop-down menu */
+body.desktop #mobile-menu {
+  display: none;
+}
+
+body.mobile #mobile-menu,
+body.tablet #mobile-menu {
+  display: block;
+  padding: 10px;
+}
+
+#mobile-menu-button {
+  width: 100%;
+  padding: 10px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  font-family: Courier, monospace;
+  font-size: 14px;
+  text-transform: lowercase;
+}
+
+#mobile-menu-content {
+  display: none;
+  margin-top: 10px;
+}
+
+#mobile-menu-content.open {
+  display: block;
+}
+
+#mobile-menu-content ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+#mobile-menu-content li a {
+  display: block;
+  padding: 8px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  color: black;
+  font-size: 12px;
+  text-transform: lowercase;
+  text-align: center;
+}
+
+body.mobile footer {
+  margin-top: auto;
+}
+
