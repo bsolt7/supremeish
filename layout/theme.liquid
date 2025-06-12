@@ -111,7 +111,7 @@
 
         variantSelects.forEach(s => s.addEventListener('change', updateVariant));
 
-        if(wrapper && zoomImage) {
+        if(wrapper && zoomImage && window.matchMedia('(hover: hover)').matches) {
           wrapper.addEventListener('mousemove', e => {
             const rect = wrapper.getBoundingClientRect();
             const x = ((e.clientX - rect.left)/rect.width)*100;
