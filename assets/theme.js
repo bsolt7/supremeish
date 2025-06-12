@@ -175,7 +175,7 @@ function setupAddToCartForms() {
     const addBtn = form.querySelector('button[type="submit"]');
     let removeBtn;
 
-    if (window.isMobile && addBtn) {
+    if (addBtn) {
       removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.textContent = 'Remove from Cart';
@@ -212,59 +212,22 @@ function setupAddToCartForms() {
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const variantId = form.querySelector('input[name="id"]').value;
+      const formData = new FormData(form);
 
-      if (window.isMobile) {
-        const formData = new FormData(form);
-        fetch('/cart/add.js', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
+      fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(r => r.json())
+        .then(() => {
+          if (removeBtn) removeBtn.style.display = '';
+          setTimeout(() => {
+            fetchCartAndUpdateIcon(true);
+            document.dispatchEvent(new CustomEvent('cart:updated'));
+          }, 400);
         })
-          .then(r => r.json())
-          .then(() => {
-            if (removeBtn) removeBtn.style.display = '';
-            setTimeout(() => {
-              fetchCartAndUpdateIcon(true);
-              document.dispatchEvent(new CustomEvent('cart:updated'));
-            }, 400);
-          })
-          .catch(err => console.error('Error adding to cart:', err));
-      } else {
-        if (addBtn && addBtn.dataset.added === 'true') {
-          fetch('/cart/update.js', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ updates: { [variantId]: 0 } })
-          })
-            .then(() => {
-              addBtn.textContent = 'Add to Cart';
-              addBtn.dataset.added = 'false';
-              fetchCartAndUpdateIcon(true);
-              document.dispatchEvent(new CustomEvent('cart:updated'));
-            })
-            .catch(err => console.error('Error removing from cart:', err));
-        } else {
-          const formData = new FormData(form);
-          fetch('/cart/add.js', {
-            method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
-          })
-            .then(r => r.json())
-            .then(() => {
-              if (addBtn) {
-                addBtn.textContent = 'Remove from Cart';
-                addBtn.dataset.added = 'true';
-              }
-              setTimeout(() => {
-                fetchCartAndUpdateIcon(true);
-                document.dispatchEvent(new CustomEvent('cart:updated'));
-              }, 400);
-            })
-            .catch(err => console.error('Error adding to cart:', err));
-        }
-      }
+        .catch(err => console.error('Error adding to cart:', err));
     });
   });
 }
