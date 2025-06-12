@@ -265,3 +265,82 @@ a {
   opacity: 1;
   transition: opacity 0.5s ease;
 }
+
+/* ============================
+   📱 Mobile Specific Styles
+============================ */
+body.mobile #Sidebar {
+  display: none;
+}
+
+body.mobile .collection-page {
+  flex-direction: column;
+  padding: 20px;
+}
+
+body.mobile .collection-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+body.desktop #MobileCollectionsBar {
+  display: none;
+}
+
+body.mobile #MobileCollectionsBar {
+  display: block;
+  margin: 10px 20px;
+}
+
+.mobile-collections-bar .collections-toggle {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-collections-bar .arrow {
+  transition: transform 0.3s ease;
+}
+
+.mobile-collections-bar.open .arrow {
+  transform: rotate(180deg);
+}
+
+.mobile-collections-bar .collections-dropdown {
+  display: none;
+  border: 1px solid #ccc;
+  background: white;
+  margin-top: 5px;
+}
+
+.mobile-collections-bar.open .collections-dropdown {
+  display: block;
+}
+
+.mobile-collections-bar .collections-dropdown ul {
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+
+.mobile-collections-bar .collections-dropdown li a {
+  display: block;
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+  background: #f9f9f9;
+  border-radius: 3px;
+}
+
+.mobile-collections-bar .collections-dropdown li a:hover {
+  background: #e0e0e0;
+}
