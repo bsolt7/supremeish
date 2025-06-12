@@ -323,21 +323,24 @@ body.mobile #mobile-menu {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#mobile-menu-content li {
+  width: 50%;
 }
 
 #mobile-menu-content li a {
   display: block;
-  padding: 8px;
-  background: #fafafa;
-  border: 1px solid #ddd;
+  padding: 6px 4px;
+  background: none;
+  border: none;
   text-decoration: none;
   color: black;
-  font-size: 12px;
-  text-transform: lowercase;
-  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: left;
 }
 
 /* Simplified mobile header with smaller logo */
