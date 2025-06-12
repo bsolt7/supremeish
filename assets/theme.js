@@ -186,6 +186,15 @@ function setupAddToCartForms() {
   });
 }
 
+function setupMobileMenuToggle() {
+  const button = document.getElementById('mobile-menu-button');
+  const content = document.getElementById('mobile-menu-content');
+  if (!button || !content) return;
+  button.addEventListener('click', function() {
+    content.classList.toggle('open');
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   var isMobile = /Mobi|Android/i.test(navigator.userAgent) ||
                  window.matchMedia('(max-width: 768px)').matches;
@@ -193,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.body.classList.add('loaded');
   createFloatingCartIcon();
   setupAddToCartForms();
+  setupMobileMenuToggle();
   fetchCartAndUpdateIcon();
 });
 
