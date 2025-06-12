@@ -1,0 +1,134 @@
+{% schema %}
+{
+  "name": "FAQ Section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer (Rich Text)"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 30,
+  "presets": [
+    {
+      "name": "FAQ Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<section style="max-width: 800px; margin: 60px auto; padding: 20px;">
+  <h1 style="text-align: center; font-size: 28px; font-weight: bold; margin-bottom: 40px;">Frequently Asked Questions</h1>
+
+  <div class="faq-list">
+    {% for block in section.blocks %}
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>{{ block.settings.question }}</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          {{ block.settings.answer }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.faq-item {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
+}
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+.faq-question:hover {
+  color: #555;
+}
+
+.faq-icon {
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  font-size: 15px;
+  color: #666;
+  margin-top: 10px;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  padding: 0 0;
+}
+
+.faq-answer p, .faq-answer a, .faq-answer strong, .faq-answer em {
+  margin: 5px 0;
+  line-height: 1.6;
+}
+
+.faq-answer a {
+  color: #000;
+  text-decoration: underline;
+}
+
+.faq-answer a:hover {
+  color: red;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 500px;
+  padding: 10px 0;
+}
+
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const faqItems = document.querySelectorAll('.faq-item');
+
+  faqItems.forEach(function(item) {
+    const question = item.querySelector('.faq-question');
+
+    question.addEventListener('click', function() {
+      faqItems.forEach(function(otherItem) {
+        if (otherItem !== item) {
+          otherItem.classList.remove('active');
+        }
+      });
+      item.classList.toggle('active');
+    });
+  });
+});
+</script>

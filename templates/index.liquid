@@ -1,0 +1,16 @@
+{% comment %}
+Redirect homepage to /collections/all
+This file overrides index.json; place in /templates/index.liquid
+{% endcomment %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0;url=/collections/all" />
+  <title>Redirecting…</title>
+  <script>window.location.replace('/collections/all');</script>
+</head>
+<body>
+  <p>If you are not redirected, <a href="/collections/all">click here</a>.</p>
+</body>
+</html>
