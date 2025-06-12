@@ -187,6 +187,9 @@ function setupAddToCartForms() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  var isMobile = /Mobi|Android/i.test(navigator.userAgent) ||
+                 window.matchMedia('(max-width: 768px)').matches;
+  document.body.classList.add(isMobile ? 'mobile' : 'desktop');
   document.body.classList.add('loaded');
   createFloatingCartIcon();
   setupAddToCartForms();
