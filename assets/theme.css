@@ -265,3 +265,20 @@ a {
   opacity: 1;
   transition: opacity 0.5s ease;
 }
+
+/* ============================
+   📱 Mobile Specific Styles
+============================ */
+body.mobile #Sidebar {
+  display: none;
+}
+
+body.mobile .collection-page {
+  flex-direction: column;
+  padding: 20px;
+}
+
+body.mobile .collection-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
