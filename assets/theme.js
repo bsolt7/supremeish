@@ -165,23 +165,45 @@ function setupAddToCartForms() {
   document.querySelectorAll('form[action^="/cart/add"]').forEach(form => {
     if (form.dataset.bound) return;
     form.dataset.bound = true;
+    const button = form.querySelector('button[type="submit"]');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      const formData = new FormData(form);
-      fetch('/cart/add.js', {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' }
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Item added to cart:', data);
-          setTimeout(() => {
+      const variantId = form.querySelector('input[name="id"]').value;
+
+      if (button && button.dataset.added === 'true') {
+        fetch('/cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ updates: { [variantId]: 0 } })
+        })
+          .then(() => {
+            button.textContent = 'Add to Cart';
+            button.dataset.added = 'false';
             fetchCartAndUpdateIcon(true);
             document.dispatchEvent(new CustomEvent('cart:updated'));
-          }, 400);
+          })
+          .catch(error => console.error('Error removing from cart:', error));
+      } else {
+        const formData = new FormData(form);
+        fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
         })
-        .catch(error => console.error('Error adding to cart:', error));
+          .then(response => response.json())
+          .then(data => {
+            console.log('Item added to cart:', data);
+            if (button) {
+              button.textContent = 'Remove from Cart';
+              button.dataset.added = 'true';
+            }
+            setTimeout(() => {
+              fetchCartAndUpdateIcon(true);
+              document.dispatchEvent(new CustomEvent('cart:updated'));
+            }, 400);
+          })
+          .catch(error => console.error('Error adding to cart:', error));
+      }
     });
   });
 }
