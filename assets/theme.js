@@ -187,7 +187,21 @@ function setupAddToCartForms() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  var isMobile = /Mobi|Android/i.test(navigator.userAgent) ||
+                 window.matchMedia('(max-width: 768px)').matches;
+  document.body.classList.add(isMobile ? 'mobile' : 'desktop');
   document.body.classList.add('loaded');
+
+  if (isMobile) {
+    var toggle = document.getElementById('CollectionsToggle');
+    var bar = document.getElementById('MobileCollectionsBar');
+    if (toggle && bar) {
+      toggle.addEventListener('click', function () {
+        bar.classList.toggle('open');
+      });
+    }
+  }
+
   createFloatingCartIcon();
   setupAddToCartForms();
   fetchCartAndUpdateIcon();

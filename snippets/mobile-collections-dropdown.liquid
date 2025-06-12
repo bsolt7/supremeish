@@ -1,0 +1,17 @@
+<div id="MobileCollectionsBar" class="mobile-collections-bar">
+  <button id="CollectionsToggle" class="collections-toggle" type="button">
+    Collections <span class="arrow">&#9660;</span>
+  </button>
+  <div id="CollectionsDropdown" class="collections-dropdown">
+    {% assign dropdown_menu = linklists['sidebar-menu'] %}
+    {% if dropdown_menu.links.size > 0 %}
+      <ul>
+      {% for link in dropdown_menu.links %}
+        <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p style="padding:10px;">No collections found.</p>
+    {% endif %}
+  </div>
+</div>
