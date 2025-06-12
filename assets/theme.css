@@ -323,24 +323,26 @@ body.mobile #mobile-menu {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  justify-items: center;
 }
 
 #mobile-menu-content li {
-  width: 50%;
+  width: auto;
 }
 
 #mobile-menu-content li a {
   display: block;
-  padding: 6px 4px;
+  padding: 10px 0;
   background: none;
   border: none;
   text-decoration: none;
   color: black;
   font-size: 14px;
   font-weight: bold;
-  text-align: left;
+  text-align: center;
 }
 
 /* Simplified mobile header with smaller logo */
@@ -360,5 +362,44 @@ body.mobile #date-time-display {
 /* Ensure footer remains visible on mobile */
 body.mobile footer {
   margin-bottom: 20px;
+}
+
+/* Mobile product page layout */
+body.mobile .product-page {
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+body.mobile .product-page > .product-left,
+body.mobile .product-page > .product-right {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+}
+
+body.mobile .product-right {
+  flex-direction: column !important;
+}
+
+/* Mobile cart layout */
+body.mobile .cart-table thead {
+  display: none;
+}
+
+body.mobile .cart-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 0;
+}
+
+body.mobile .cart-item-info {
+  justify-content: center;
+  text-align: center;
+}
+
+body.mobile .cart-item-qty,
+body.mobile .cart-item-price {
+  margin-top: 10px;
+  text-align: center !important;
 }
 

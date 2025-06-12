@@ -8,9 +8,9 @@
 
   {% if cart.item_count > 0 %}
     <form action="/cart" method="post" novalidate style="padding: 20px;">
-      <table style="width: 100%; border-collapse: collapse;">
+      <table class="cart-table" style="width: 100%; border-collapse: collapse;">
         <thead>
-          <tr style="border-bottom: 1px dotted black;">
+          <tr class="cart-row" style="border-bottom: 1px dotted black;">
             <th style="text-align: left; padding: 10px;">Product</th>
             <th style="text-align: center;">Qty</th>
             <th style="text-align: right;">Price</th>
@@ -18,8 +18,8 @@
         </thead>
         <tbody>
           {% for item in cart.items %}
-          <tr style="border-bottom: 1px dotted black;">
-            <td style="padding: 15px 10px; display: flex; align-items: center; gap: 15px;">
+          <tr class="cart-row" style="border-bottom: 1px dotted black;">
+            <td class="cart-item-info" style="padding: 15px 10px; display: flex; align-items: center; gap: 15px;">
               <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title }}" style="width: 130px; height: auto;">
               <div style="line-height: 1.8;">
                 <a href="{{ item.url }}" style="text-decoration: none; color: black; font-size: 15px;">{{ item.product.title }}</a><br>
@@ -27,7 +27,7 @@
               </div>
             </td>
 
-            <td style="text-align: center;">
+            <td class="cart-item-qty" style="text-align: center;">
               <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
                 <!-- Quantity Dropdown -->
                 <select name="updates[]" style="width: 70px; padding: 6px; border: 1px solid black; background: transparent; font-family: Courier, monospace; font-size: 13px; text-align: center;">
@@ -45,7 +45,7 @@
               </div>
             </td>
 
-            <td style="text-align: right; font-size: 15px;">
+            <td class="cart-item-price" style="text-align: right; font-size: 15px;">
               {{ item.line_price | money }}
             </td>
           </tr>
