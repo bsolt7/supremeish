@@ -200,11 +200,17 @@ function setupAddToCartForms() {
           .catch(err => console.error('Error removing from cart:', err));
       });
 
+      let visibilityRequest = 0;
       const updateRemoveVisibility = () => {
-        const variantId = form.querySelector('input[name="id"]').value;
-        variantInCart(variantId).then(inCart => {
-          removeBtn.style.display = inCart ? '' : 'none';
-        });
+        const req = ++visibilityRequest;
+        setTimeout(() => {
+          const variantId = form.querySelector('input[name="id"]').value;
+          variantInCart(variantId).then(inCart => {
+            if (req === visibilityRequest) {
+              removeBtn.style.display = inCart ? '' : 'none';
+            }
+          });
+        }, 0);
       };
       form.querySelectorAll('select[name^="options"]').forEach(s => s.addEventListener('change', updateRemoveVisibility));
       updateRemoveVisibility();
