@@ -305,8 +305,9 @@ body.mobile #mobile-menu {
   padding: 10px;
   background: #f5f5f5;
   border: 1px solid #ddd;
-  font-family: Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-size: 14px;
+  font-weight: bold;
   text-transform: lowercase;
 }
 
@@ -340,6 +341,7 @@ body.mobile #mobile-menu {
   text-decoration: none;
   color: black;
   font-size: 14px;
+  font-family: "Courier New", Courier, monospace;
   font-weight: bold;
   text-align: center;
 }
