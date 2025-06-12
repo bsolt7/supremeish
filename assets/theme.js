@@ -160,49 +160,110 @@ function fetchMiniCart() {
     })
     .catch(error => console.error('Error loading mini-cart:', error));
 }
+function variantInCart(variantId) {
+  return fetch("/cart.js")
+    .then(r => r.json())
+    .then(cart => (cart.items || []).some(it => it.id == variantId || it.variant_id == variantId));
+}
+
+
 
 function setupAddToCartForms() {
   document.querySelectorAll('form[action^="/cart/add"]').forEach(form => {
     if (form.dataset.bound) return;
     form.dataset.bound = true;
-    const button = form.querySelector('button[type="submit"]');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const variantId = form.querySelector('input[name="id"]').value;
+    const addBtn = form.querySelector('button[type="submit"]');
+    let removeBtn;
 
-      if (button && button.dataset.added === 'true') {
+    if (window.isMobile && addBtn) {
+      removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'Remove from Cart';
+      removeBtn.className = addBtn.className;
+      removeBtn.style.flex = addBtn.style.flex || '1';
+      removeBtn.style.display = 'none';
+      removeBtn.classList.add('remove-from-cart-button');
+      addBtn.parentNode.insertBefore(removeBtn, addBtn.nextSibling);
+
+      removeBtn.addEventListener('click', () => {
+        const variantId = form.querySelector('input[name="id"]').value;
         fetch('/cart/update.js', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ updates: { [variantId]: 0 } })
         })
           .then(() => {
-            button.textContent = 'Add to Cart';
-            button.dataset.added = 'false';
+            removeBtn.style.display = 'none';
             fetchCartAndUpdateIcon(true);
             document.dispatchEvent(new CustomEvent('cart:updated'));
           })
-          .catch(error => console.error('Error removing from cart:', error));
-      } else {
+          .catch(err => console.error('Error removing from cart:', err));
+      });
+
+      const updateRemoveVisibility = () => {
+        const variantId = form.querySelector('input[name="id"]').value;
+        variantInCart(variantId).then(inCart => {
+          removeBtn.style.display = inCart ? '' : 'none';
+        });
+      };
+      form.querySelectorAll('select[name^="options"]').forEach(s => s.addEventListener('change', updateRemoveVisibility));
+      updateRemoveVisibility();
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const variantId = form.querySelector('input[name="id"]').value;
+
+      if (window.isMobile) {
         const formData = new FormData(form);
         fetch('/cart/add.js', {
           method: 'POST',
           body: formData,
           headers: { 'Accept': 'application/json' }
         })
-          .then(response => response.json())
-          .then(data => {
-            console.log('Item added to cart:', data);
-            if (button) {
-              button.textContent = 'Remove from Cart';
-              button.dataset.added = 'true';
-            }
+          .then(r => r.json())
+          .then(() => {
+            if (removeBtn) removeBtn.style.display = '';
             setTimeout(() => {
               fetchCartAndUpdateIcon(true);
               document.dispatchEvent(new CustomEvent('cart:updated'));
             }, 400);
           })
-          .catch(error => console.error('Error adding to cart:', error));
+          .catch(err => console.error('Error adding to cart:', err));
+      } else {
+        if (addBtn && addBtn.dataset.added === 'true') {
+          fetch('/cart/update.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ updates: { [variantId]: 0 } })
+          })
+            .then(() => {
+              addBtn.textContent = 'Add to Cart';
+              addBtn.dataset.added = 'false';
+              fetchCartAndUpdateIcon(true);
+              document.dispatchEvent(new CustomEvent('cart:updated'));
+            })
+            .catch(err => console.error('Error removing from cart:', err));
+        } else {
+          const formData = new FormData(form);
+          fetch('/cart/add.js', {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          })
+            .then(r => r.json())
+            .then(() => {
+              if (addBtn) {
+                addBtn.textContent = 'Remove from Cart';
+                addBtn.dataset.added = 'true';
+              }
+              setTimeout(() => {
+                fetchCartAndUpdateIcon(true);
+                document.dispatchEvent(new CustomEvent('cart:updated'));
+              }, 400);
+            })
+            .catch(err => console.error('Error adding to cart:', err));
+        }
       }
     });
   });
@@ -218,9 +279,9 @@ function setupMobileMenuToggle() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  var isMobile = /Mobi|Android/i.test(navigator.userAgent) ||
-                 window.matchMedia('(max-width: 768px)').matches;
-  document.body.classList.add(isMobile ? 'mobile' : 'desktop');
+  window.isMobile = /Mobi|Android/i.test(navigator.userAgent) ||
+                     window.matchMedia('(max-width: 768px)').matches;
+  document.body.classList.add(window.isMobile ? 'mobile' : 'desktop');
   document.body.classList.add('loaded');
   createFloatingCartIcon();
   setupAddToCartForms();
