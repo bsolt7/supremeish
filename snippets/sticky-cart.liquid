@@ -134,25 +134,5 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStickyCart();
   });
 
-  // Listen to manual "add to cart" triggers and force update
-  document.querySelectorAll('form[action^="/cart/add"]').forEach(function(form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const formData = new FormData(form);
-      fetch('/cart/add.js', {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' }
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Dispatch a manual event to update sticky cart
-        const event = new Event('cart:updated');
-        document.dispatchEvent(event);
-      })
-      .catch(error => console.error('Error adding to cart:', error));
-    });
-  });
 });
 </script>
