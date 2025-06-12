@@ -1,0 +1,83 @@
+<div style="text-align: center; padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  {% if section.settings.logo %}
+    <img src="{{ section.settings.logo | image_url: width: 600 }}" alt="Logo" style="max-width: 300px; width: 100%; height: auto; margin-bottom: 40px;">
+  {% endif %}
+
+  {% if section.settings.button_label %}
+    <a href="{{ section.settings.button_link }}" class="enter-button">
+  {{ section.settings.button_label }}
+</a>
+
+
+  {% endif %}
+  
+</div>
+
+{% schema %}
+{
+  "name": "Enter Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Upload Logo"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Enter"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_padding",
+      "label": "Button Padding (vertical px)",
+      "min": 5,
+      "max": 30,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Section Padding Top (px)",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Section Padding Bottom (px)",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Enter Banner"
+    }
+  ]
+}
+{% endschema %}

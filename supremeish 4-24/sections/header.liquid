@@ -1,0 +1,128 @@
+<header style="text-align: center; padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px; background: {{ section.settings.background_color }}; {% if section.settings.sticky_header %}position: sticky; top: 0; z-index: 999;{% endif %}">
+  <a href="/collections/all" style="text-decoration: none; color: inherit;">
+    {% if section.settings.logo %}
+      <img 
+        src="{{ section.settings.logo | image_url: width: 800 }}" 
+        alt="{{ shop.name }}" 
+        style="max-width: {{ section.settings.logo_width }}px; width: 100%; height: auto;">
+    {% else %}
+      <h1 style="font-size: 24px; margin: 0;">{{ shop.name }}</h1>
+    {% endif %}
+  </a>
+</header>
+
+<!-- Date/Time -->
+<div id="date-time-display" style="text-align: center; font-family: Courier, monospace; font-size: 14px; margin-top: 1x; margin-bottom: 1px; color: black; opacity: 0; transition: opacity 1s ease;">
+  Loading time...
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  function updateDateTime() {
+    const options = {
+      timeZone: 'America/Los_Angeles',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    };
+
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const parts = formatter.formatToParts(now);
+
+    let date = '';
+    let time = '';
+
+    parts.forEach(({ type, value }) => {
+      if (type === 'month' || type === 'day' || type === 'year') {
+        date += value + (type !== 'year' ? '/' : '');
+      }
+      if (type === 'hour') {
+        time += value + ':';
+      }
+      if (type === 'minute') {
+        time += value;
+      }
+      if (type === 'dayPeriod') {
+        time += value; // No space before AM/PM
+      }
+    });
+
+    const finalString = `${date} ${time} LA`;
+    const dateTimeDisplay = document.getElementById('date-time-display');
+    dateTimeDisplay.textContent = finalString;
+
+    // ✅ Fade in the time once it loads
+    dateTimeDisplay.style.opacity = 1;
+  }
+
+  updateDateTime();
+  setInterval(updateDateTime, 1000); // Update every second
+});
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Upload Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo Width (px)",
+      "min": 50,
+      "max": 600,
+      "step": 10,
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Header Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Bottom Border Color",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Sticky Header on Scroll",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header"
+    }
+  ]
+}
+{% endschema %}

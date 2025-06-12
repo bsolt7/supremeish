@@ -1,0 +1,99 @@
+<section style="max-width: 700px; margin: 60px auto; padding: 20px;">
+  <h1 style="text-align: center; font-size: 28px; font-weight: bold; margin-bottom: 30px; font-family: Courier, monospace;">Contact Us</h1>
+
+  <p style="text-align: center; margin-bottom: 40px; font-family: Courier, monospace; font-size: 14px;">
+    Have a question or need help? Fill out the form below or email us at 
+    <a href="mailto:contact@unwokeism.co" style="text-decoration: underline; color: black;">contact@unwokeism.co</a>.
+  </p>
+
+  {% form 'contact', id: 'ContactForm' %}
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+
+      <!-- Name -->
+      <div style="display: flex; flex-direction: column;">
+        <label for="ContactFormName" style="font-family: Courier, monospace; font-size: 14px;">Name</label>
+        <input type="text" id="ContactFormName" name="contact[name]" required class="input-field">
+      </div>
+
+      <!-- Email -->
+      <div style="display: flex; flex-direction: column;">
+        <label for="ContactFormEmail" style="font-family: Courier, monospace; font-size: 14px;">Email</label>
+        <input type="email" id="ContactFormEmail" name="contact[email]" required class="input-field">
+      </div>
+
+      <!-- Message -->
+      <div style="display: flex; flex-direction: column;">
+        <label for="ContactFormMessage" style="font-family: Courier, monospace; font-size: 14px;">Message</label>
+        <textarea id="ContactFormMessage" name="contact[body]" rows="6" required class="input-field"></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" style="background: black; color: white; border: 1px solid black; padding: 12px 0; text-transform: uppercase; font-family: Courier, monospace; font-size: 12px; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease;">
+        Send Message
+      </button>
+
+    </div>
+  {% endform %}
+</section>
+
+<!-- Centered Success Popup -->
+<div id="success-popup" style="
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: black;
+  color: white;
+  padding: 20px 30px;
+  font-family: Courier, monospace;
+  font-size: 16px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 9999;
+">
+  Message sent!
+</div>
+
+<!-- 🎨 Styles -->
+<style>
+.input-field {
+  border: 1px solid black;
+  padding: 10px;
+  font-family: Courier, monospace;
+  font-size: 14px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+.input-field:focus {
+  outline: none;
+  border: 2px solid black;
+  background: #f9f9f9;
+}
+button:hover {
+  background: white;
+  color: black;
+}
+</style>
+
+<!-- ⚡ Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const successPopup = document.getElementById('success-popup');
+
+  if (window.location.search.includes('contact_posted=true')) {
+    successPopup.style.display = 'block';
+    setTimeout(function() {
+      successPopup.style.opacity = 1; // fade in
+    }, 100);
+
+    setTimeout(function() {
+      successPopup.style.opacity = 0; // fade out
+      setTimeout(function() {
+        successPopup.style.display = 'none';
+      }, 500); // fully hide after fade
+    }, 5000); // after 5 seconds
+  }
+});
+</script>

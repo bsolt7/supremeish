@@ -1,0 +1,132 @@
+<section style="max-width: 800px; margin: 60px auto; padding: 20px;">
+  <h1 style="text-align: center; font-size: 28px; font-weight: bold; margin-bottom: 30px; font-family: Courier, monospace;">Frequently Asked Questions</h1>
+
+  <div style="text-align: center; margin-bottom: 30px;">
+    <button id="toggle-all-faqs" style="background: red; color: white; border: none; padding: 10px 20px; font-family: Courier, monospace; font-size: 12px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease;">Expand All</button>
+  </div>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-question">What is your return policy?<span class="faq-icon">+</span></div>
+      <div class="faq-answer">
+        <p>We accept returns within 30 days of purchase. Items must be unworn and in original condition. Contact us at <a href="mailto:contact@yourstore.com">contact@yourstore.com</a>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">How long does shipping take?<span class="faq-icon">+</span></div>
+      <div class="faq-answer">
+        <p>Shipping typically takes 5-7 business days within the U.S. International orders may take longer depending on customs.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">Do you ship internationally?<span class="faq-icon">+</span></div>
+      <div class="faq-answer">
+        <p>Yes, we ship worldwide! Shipping costs are calculated at checkout based on your location.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Styles -->
+<style>
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.faq-item {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+}
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: Courier, monospace;
+  font-size: 18px;
+  color: black;
+  transition: color 0.3s ease;
+  padding: 10px 0;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+  font-family: Courier, monospace;
+  font-size: 15px;
+  color: black; /* Changed to black */
+  padding: 0 0;
+}
+
+.faq-answer p, .faq-answer a {
+  margin: 5px 0;
+  line-height: 1.6;
+}
+
+.faq-answer a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.faq-answer a:hover {
+  color: red;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 500px;
+  opacity: 1;
+  padding: 10px 0;
+}
+
+.faq-icon {
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
+}
+</style>
+
+<!-- Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const faqItems = document.querySelectorAll('.faq-item');
+  const toggleAllButton = document.getElementById('toggle-all-faqs');
+  let allExpanded = false;
+
+  faqItems.forEach(function(item) {
+    const question = item.querySelector('.faq-question');
+
+    question.addEventListener('click', function() {
+      // Close others when clicking a new one
+      faqItems.forEach(function(otherItem) {
+        if (otherItem !== item) {
+          otherItem.classList.remove('active');
+        }
+      });
+      item.classList.toggle('active');
+    });
+  });
+
+  toggleAllButton.addEventListener('click', function() {
+    allExpanded = !allExpanded;
+    faqItems.forEach(function(item) {
+      if (allExpanded) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+    toggleAllButton.textContent = allExpanded ? 'Collapse All' : 'Expand All';
+  });
+});
+</script>
