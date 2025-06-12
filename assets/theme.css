@@ -283,6 +283,13 @@ body.mobile .collection-grid {
   gap: 15px;
 }
 
+/* Disable internal scrolling of the product grid on mobile */
+body.mobile .collection-grid-wrapper {
+  max-height: none;
+  overflow-y: visible;
+  padding-right: 0;
+}
+
 /* Mobile drop-down menu */
 body.desktop #mobile-menu {
   display: none;
@@ -331,5 +338,24 @@ body.mobile #mobile-menu {
   font-size: 12px;
   text-transform: lowercase;
   text-align: center;
+}
+
+/* Simplified mobile header with smaller logo */
+body.mobile header {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+body.mobile header img {
+  max-width: 120px !important;
+}
+
+body.mobile #date-time-display {
+  display: none;
+}
+
+/* Ensure footer remains visible on mobile */
+body.mobile footer {
+  margin-bottom: 20px;
 }
 
