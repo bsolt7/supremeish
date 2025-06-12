@@ -170,6 +170,16 @@ a {
   cursor: none;
 }
 
+@media (hover: none) {
+  #main-product-image {
+    cursor: auto;
+  }
+  .zoom-wrapper:hover .zoom-image {
+    transform: none;
+    cursor: auto;
+  }
+}
+
 /* ============================
    💡 Lightbox Background
 ============================ */
