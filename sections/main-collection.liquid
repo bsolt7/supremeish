@@ -23,6 +23,18 @@
 document.addEventListener('DOMContentLoaded', function() {
   const sidebarLinks = document.querySelectorAll('#Sidebar a');
   const productGrid = document.getElementById('ProductGrid');
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+
+  function updateMobileMenuTitle(title) {
+    if (mobileMenuButton && title) {
+      mobileMenuButton.innerHTML = `${title} \u25BC`;
+    }
+  }
+
+  const activeInit = document.querySelector('#Sidebar a.active');
+  if (activeInit) {
+    updateMobileMenuTitle(activeInit.textContent.trim());
+  }
 
   function loadCollection(url, skipPushState = false) {
     const fetchUrl = url + '?view=grid-only';
@@ -50,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sidebarLinks.forEach(a => {
               if (a.getAttribute('href') === url) {
                 a.classList.add('active');
+                updateMobileMenuTitle(a.textContent.trim());
               }
             });
           }, 300);

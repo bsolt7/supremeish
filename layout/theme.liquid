@@ -23,7 +23,7 @@
 
   {% if template contains 'collection' %}
     <div id="mobile-menu">
-      <button id="mobile-menu-button">collections &#x25BC;</button>
+      <button id="mobile-menu-button">{{ collection.title | default: 'collections' }} &#x25BC;</button>
       <div id="mobile-menu-content">
         <ul>
           {% assign menu = linklists['sidebar-menu'] %}
