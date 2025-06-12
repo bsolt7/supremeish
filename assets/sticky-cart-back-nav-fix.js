@@ -25,10 +25,10 @@ function refreshStickyBanner(){
 }
 
 // 2. Refresh top-right mini-cart icon/count
-defineRefreshMiniCartCount(); // ensure fetchCartAndCount exists
+defineRefreshMiniCartCount(); // ensure fetchCartAndUpdateIcon exists
 function defineRefreshMiniCartCount(){
-  if(typeof fetchCartAndCount !== 'function') return;
-  window.refreshMiniCartCount = function(){ fetchCartAndCount(true); };
+  if(typeof fetchCartAndUpdateIcon !== 'function') return;
+  window.refreshMiniCartCount = function(){ fetchCartAndUpdateIcon(true); };
 }
 
 // 3. Combined refresh helper

@@ -1,6 +1,5 @@
 /* ============================
    🌟 General Styles
-============================ */
 body {
   font-family: Arial, sans-serif;
   background-color: var(--background_color, #ffffff);
@@ -22,7 +21,6 @@ a {
 
 /* ============================
    ✨ Enter Button (Animated Shine Effect)
-============================ */
 .enter-button {
   position: relative;
   display: inline-block;
@@ -68,7 +66,6 @@ a {
 
 /* ============================
    📝 Sidebar Menu Fonts
-============================ */
 .sidebar-menu.courier a { font-family: "Courier New", Courier, monospace; }
 .sidebar-menu.ibm-plex-mono a { font-family: "IBM Plex Mono", monospace; }
 .sidebar-menu.space-mono a { font-family: "Space Mono", monospace; }
@@ -76,7 +73,6 @@ a {
 
 /* ============================
    🎯 Sidebar Links
-============================ */
 #Sidebar a {
   display: inline-block;
   font-size: 12px;
@@ -99,7 +95,6 @@ a {
 
 /* ============================
    🛍️ Product Cards
-============================ */
 .primary-image {
   display: block;
   width: 100%;
@@ -145,7 +140,6 @@ a {
 
 /* ============================
    🔍 Product Zoom
-============================ */
 #main-product-image {
   transition: transform 0.3s ease;
   cursor: zoom-in;
@@ -172,14 +166,12 @@ a {
 
 /* ============================
    💡 Lightbox Background
-============================ */
 .lb-overlay {
   background: rgba(0, 0, 0, 0.95);
 }
 
 /* ============================
    🛍️ Collection Page Layout
-============================ */
 .collection-page {
   display: flex;
   max-width: 1200px;
@@ -205,7 +197,6 @@ a {
 
 /* ============================
    🛍️ Product Grid Layout
-============================ */
 .collection-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -235,7 +226,6 @@ a {
 
 /* ============================
    🛒 Scrollbar Styling
-============================ */
 .collection-grid-wrapper::-webkit-scrollbar {
   width: 6px;
 }
@@ -251,7 +241,6 @@ a {
 
 /* ============================
    🛒 Smooth Fade Transitions
-============================ */
 #ProductGrid {
   transition: opacity 0.5s ease;
 }
@@ -264,4 +253,82 @@ a {
 .fade-in {
   opacity: 1;
   transition: opacity 0.5s ease;
+}
+
+/* ============================
+   📱 Mobile Specific Styles
+body.mobile #Sidebar {
+  display: none;
+}
+
+body.mobile .collection-page {
+  flex-direction: column;
+  padding: 20px;
+}
+
+body.mobile .collection-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+body.desktop #MobileCollectionsBar {
+  display: none;
+}
+
+body.mobile #MobileCollectionsBar {
+  display: block;
+  margin: 10px 20px;
+}
+
+.mobile-collections-bar .collections-toggle {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-collections-bar .arrow {
+  transition: transform 0.3s ease;
+}
+
+.mobile-collections-bar.open .arrow {
+  transform: rotate(180deg);
+}
+
+.mobile-collections-bar .collections-dropdown {
+  display: none;
+  border: 1px solid #ccc;
+  background: white;
+  margin-top: 5px;
+}
+
+.mobile-collections-bar.open .collections-dropdown {
+  display: block;
+}
+
+.mobile-collections-bar .collections-dropdown ul {
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+
+.mobile-collections-bar .collections-dropdown li a {
+  display: block;
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+  background: #f9f9f9;
+  border-radius: 3px;
+}
+
+.mobile-collections-bar .collections-dropdown li a:hover {
+  background: #e0e0e0;
 }

@@ -21,6 +21,10 @@
 
   {% section 'header' %}
 
+  {% if template contains 'collection' %}
+    {% render 'mobile-collections-dropdown' %}
+  {% endif %}
+
   <!-- 🔥 Main Layout Wrapper (Sidebar + Content) -->
   <main class="collection-page" style="display: flex; max-width: 1400px; margin: 0 auto; padding: 40px; gap: 40px;">
     {% if template contains 'collection' %}
