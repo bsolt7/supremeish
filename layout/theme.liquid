@@ -79,6 +79,7 @@
         const selectedColor = document.getElementById('selected-color-text');
         const productData = JSON.parse(document.getElementById('ProductJson-{{ product.id }}').textContent);
         const colorSelect = document.querySelector('select[name="options[Color]"]');
+        const otherSelects = [...variantSelects].filter(s => s !== colorSelect);
         const wrapper = document.querySelector('.zoom-wrapper');
         const zoomImage = document.querySelector('.zoom-image');
 
@@ -89,10 +90,21 @@
         }
         function updateVariant() {
           const match = findMatchingVariant();
-          if(match){ priceElement.textContent = formatMoney(match.price); idInput.value = match.id; }
+          if (match) {
+            priceElement.textContent = formatMoney(match.price);
+            idInput.value = match.id;
+          }
           updateColorName();
         }
         function updateColorName(){ if(selectedColor && colorSelect) selectedColor.textContent = colorSelect.value; }
+        function updateImageByColor(val){
+          if(!val) return;
+          const thumb = Array.from(thumbnails).find(t => t.dataset.color && t.dataset.color.toLowerCase().trim() === val.toLowerCase().trim());
+          if(thumb){
+            mainImage.src = thumb.dataset.full;
+            mainImageLink.href = thumb.dataset.zoom;
+          }
+        }
 
         thumbnails.forEach(t => t.addEventListener('click', function(){
           mainImage.src = t.dataset.full;
@@ -109,7 +121,16 @@
           }
         }));
 
-        variantSelects.forEach(s => s.addEventListener('change', updateVariant));
+        otherSelects.forEach(s => s.addEventListener('change', updateVariant));
+
+        if(colorSelect){
+          colorSelect.addEventListener('change', function(e){
+            updateVariant();
+            if(e.isTrusted){
+              updateImageByColor(colorSelect.value);
+            }
+          });
+        }
 
         if(wrapper && zoomImage && window.matchMedia('(hover: hover)').matches) {
           wrapper.addEventListener('mousemove', e => {
