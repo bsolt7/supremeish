@@ -357,26 +357,13 @@ body.mobile #mobile-menu {
 }
 
 /* Simplified mobile header with smaller logo */
-
 body.mobile header {
   padding-top: 10px !important;
   padding-bottom: 10px !important;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  text-align: left !important;
 }
 
 body.mobile header img {
   max-width: 120px !important;
-}
-
-body.mobile header .mobile-back-arrow {
-  display: block;
-  font-size: 20px;
-  margin-right: 10px;
-  color: black;
-  text-decoration: none;
 }
 
 body.mobile #date-time-display {
@@ -410,21 +397,20 @@ body.mobile .cart-table thead {
 }
 
 body.mobile .cart-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   padding: 15px 0;
 }
 
 body.mobile .cart-item-info {
-  justify-content: flex-start;
-  text-align: left;
+  justify-content: center;
+  text-align: center;
 }
 
 body.mobile .cart-item-qty,
 body.mobile .cart-item-price {
-  margin-top: 0;
+  margin-top: 10px;
   text-align: center !important;
 }
 
