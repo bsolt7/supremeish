@@ -8,7 +8,7 @@ function createFloatingCartIcon() {
   floatingIcon.style.right = '30px';
   floatingIcon.style.zIndex = '9999';
   floatingIcon.innerHTML = `
-    <div style="position: relative;">
+    <div style="position: relative; display: flex; align-items: center; gap: 8px;">
       <button id="floating-cart-button" style="
         background-color: white;
         border: 1px solid black;
@@ -42,6 +42,7 @@ function createFloatingCartIcon() {
           border: 1px solid white;
         ">0</span>
       </button>
+      <a href="/checkout" id="floating-checkout-button" style="display:none;text-decoration:none;padding:8px 12px;border:1px solid red;color:red;font-family:Courier, monospace;font-size:12px;text-transform:uppercase;">Checkout</a>
       <div id="mini-cart" style="
         opacity: 0;
         visibility: hidden;
@@ -95,10 +96,14 @@ function bindCartEvents() {
 function updateFloatingCartIcon(cartCount = 0) {
   const icon = document.getElementById('floating-cart-icon');
   const count = document.getElementById('floating-cart-count');
+  const checkoutBtn = document.getElementById('floating-checkout-button');
   if (!icon || !count) return;
 
   icon.style.display = 'block';
   count.textContent = cartCount;
+  if (window.isMobile && checkoutBtn) {
+    checkoutBtn.style.display = cartCount > 0 ? 'inline-block' : 'none';
+  }
   setTimeout(() => {
     const btn = document.getElementById('floating-cart-button');
     if (btn) btn.style.opacity = '1';
