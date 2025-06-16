@@ -1,0 +1,9 @@
+{
+  "name": "supremeish",
+  "version": "1.0.0",
+  "description": "Placeholder package to enable npm test",
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  },
+  "devDependencies": {}
+}
