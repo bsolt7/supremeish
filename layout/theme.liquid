@@ -67,8 +67,17 @@
     <script id="ProductJson-{{ product.id }}" type="application/json">
       {{ product | json }}
     </script>
+    <script id="VariantMediaJson-{{ product.id }}" type="application/json">
+      {
+        {% for variant in product.variants %}
+          "{{ variant.id }}": {% if variant.featured_media %}{
+            "image": {{ variant.featured_media.preview_image | image_url: width: 800 | json }},
+            "zoom": {{ variant.featured_media.preview_image | image_url: width: 1600 | json }}
+          }{% else %}null{% endif %}{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      }
+    </script>
     <script>
-      /* existing product‑page JS unchanged */
       document.addEventListener('DOMContentLoaded', function() {
         const thumbnails = document.querySelectorAll('.thumbnail');
         const mainImage = document.getElementById('main-product-image');
@@ -78,7 +87,10 @@
         const idInput = document.getElementById('variant-id');
         const selectedColor = document.getElementById('selected-color-text');
         const productData = JSON.parse(document.getElementById('ProductJson-{{ product.id }}').textContent);
-        const colorSelect = document.querySelector('select[name="options[Color]"]');
+        const variantMedia = JSON.parse(document.getElementById('VariantMediaJson-{{ product.id }}').textContent);
+        const colorSelect = Array.from(variantSelects).find(select =>
+          select.name.replace(/^options\[|\]$/g, '').toLowerCase() === 'color'
+        );
         const otherSelects = [...variantSelects].filter(s => s !== colorSelect);
         const wrapper = document.querySelector('.zoom-wrapper');
         const zoomImage = document.querySelector('.zoom-image');
@@ -93,6 +105,7 @@
           if (match) {
             priceElement.textContent = formatMoney(match.price);
             idInput.value = match.id;
+            updateImageForVariant(match);
           }
           updateColorName();
         }
@@ -104,6 +117,15 @@
             mainImage.src = thumb.dataset.full;
             mainImageLink.href = thumb.dataset.zoom;
           }
+        }
+        function updateImageForVariant(variant) {
+          const media = variantMedia[String(variant.id)];
+          if (media) {
+            mainImage.src = media.image;
+            mainImageLink.href = media.zoom;
+            return;
+          }
+          updateImageByColor(colorSelect && colorSelect.value);
         }
 
         thumbnails.forEach(t => t.addEventListener('click', function(){
@@ -124,11 +146,8 @@
         otherSelects.forEach(s => s.addEventListener('change', updateVariant));
 
         if(colorSelect){
-          colorSelect.addEventListener('change', function(e){
+          colorSelect.addEventListener('change', function(){
             updateVariant();
-            if(e.isTrusted){
-              updateImageByColor(colorSelect.value);
-            }
           });
         }
 
@@ -141,7 +160,7 @@
           });
           wrapper.addEventListener('mouseleave', () => zoomImage.style.transformOrigin = 'center center');
         }
-        updateColorName();
+        updateVariant();
       });
     </script>
   {% endif %}
