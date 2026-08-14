@@ -18,38 +18,33 @@
   <div class="product-right" style="flex: 0 0 50%; display: flex; flex-direction: row; gap: 20px;">
 
     <!-- Thumbnails -->
-    <div class="product-thumbnails" aria-label="Available colors">
-      {% assign color_option = product.options_with_values | where: 'name', 'Color' | first %}
-      {% unless color_option %}
-        {% assign color_option = product.options_with_values | where: 'name', 'Colour' | first %}
-      {% endunless %}
-      {% if color_option %}
-        {% assign color_index = color_option.position | minus: 1 %}
-        {% for value in color_option.values %}
-          {% assign color_variant = nil %}
-          {% for variant in product.variants %}
-            {% if variant.options[color_index] == value and color_variant == nil %}
-              {% assign color_variant = variant %}
-            {% endif %}
+    <div class="product-thumbnails" style="display: flex; flex-direction: column; gap: 10px;">
+      {% assign handled_colors = '' %}
+      {% for option in product.options_with_values %}
+        {% if option.name == 'Color' %}
+          {% for value in option.values %}
+            {% unless handled_colors contains value %}
+              {% assign handled_colors = handled_colors | append: value | append: ',' %}
+              <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px;">
+                {% assign color_handle = value | handleize %}
+                {% for media in product.media %}
+                  {% assign media_handle = media.src | split: '/' | last | remove: '.jpg' | remove: '.png' | remove: '.jpeg' | handleize %}
+                  {% if media_handle contains color_handle %}
+                    <img 
+                      src="{{ media.preview_image | image_url: width: 150 }}"
+                      data-full="{{ media.preview_image | image_url: width: 800 }}"
+                      data-zoom="{{ media.preview_image | image_url: width: 1600 }}"
+                      data-color="{{ value }}"
+                      class="thumbnail"
+                      alt="{{ value }}"
+                      style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" />
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endunless %}
           {% endfor %}
-          {% assign color_media = color_variant.featured_media | default: product.featured_media %}
-          <button
-            type="button"
-            class="color-swatch{% if color_variant.id == product.selected_or_first_available_variant.id or product.selected_or_first_available_variant.options[color_index] == value %} is-selected{% endif %}"
-            data-color-value="{{ value | escape }}"
-            data-option-position="{{ color_option.position }}"
-            {% if color_media %}
-              data-full="{{ color_media.preview_image | image_url: width: 800 }}"
-              data-zoom="{{ color_media.preview_image | image_url: width: 1600 }}"
-              style="--swatch-image: url('{{ color_media.preview_image | image_url: width: 120 }}')"
-            {% endif %}
-            aria-label="Select {{ color_option.name | escape }}: {{ value | escape }}"
-            aria-pressed="false"
-            title="{{ value | escape }}">
-            <span class="visually-hidden">{{ value }}</span>
-          </button>
-        {% endfor %}
-      {% endif %}
+        {% endif %}
+      {% endfor %}
     </div>
 
     <!-- Product Info -->
@@ -61,7 +56,7 @@
 
       <!-- 🎯 Dynamic color output -->
       <p id="selected-color-text" style="font-size: 14px; font-weight: bold; text-transform: uppercase; margin: 0;">
-        {% if color_option %}{{ product.selected_or_first_available_variant.options[color_index] }}{% endif %}
+        {{ product.selected_or_first_available_variant.option1 }}
       </p>
 
       <p id="product-price" style="font-size: 16px; font-weight: bold; margin: 5px 0;">
@@ -80,9 +75,9 @@
           {% for option in product.options_with_values %}
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
               <label style="font-size: 12px;">{{ option.name }}</label>
-              <select class="single-option-selector" name="options[{{ option.name }}]" data-option-position="{{ option.position }}">
+              <select class="single-option-selector" name="options[{{ option.name }}]">
                 {% for value in option.values %}
-                  <option value="{{ value | escape }}"{% if option.selected_value == value %} selected{% endif %}>{{ value }}</option>
+                  <option value="{{ value }}">{{ value }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -96,12 +91,6 @@
         </div>
 
       {% endform %}
-
-      <div id="product-variant-data" hidden>
-        {% for variant in product.variants %}
-          <span data-variant-id="{{ variant.id }}" data-options="{{ variant.options | json | escape }}" data-price="{{ variant.price | money | escape }}" data-available="{{ variant.available }}"{% if variant.featured_media %} data-full="{{ variant.featured_media.preview_image | image_url: width: 800 }}" data-zoom="{{ variant.featured_media.preview_image | image_url: width: 1600 }}"{% endif %}></span>
-        {% endfor %}
-      </div>
 
     </div>
 
@@ -159,125 +148,4 @@
   background-color: black;
   color: white;
 }
-
-.product-thumbnails {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 10px;
-  width: 70px;
-}
-.color-swatch {
-  width: 60px;
-  height: 60px;
-  padding: 0;
-  border: 1px solid #aaa;
-  background: #eee var(--swatch-image) center / cover no-repeat;
-  cursor: pointer;
-}
-.color-swatch:hover,
-.color-swatch:focus-visible {
-  border-color: #000;
-}
-.color-swatch.is-selected {
-  border: 3px solid #000;
-  box-shadow: 0 0 0 2px #fff inset;
-}
-.visually-hidden {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
 </style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const page = document.querySelector('.product-page');
-    if (!page) return;
-
-    const selectors = Array.from(page.querySelectorAll('.single-option-selector'));
-    const swatches = Array.from(page.querySelectorAll('.color-swatch'));
-    const variants = Array.from(page.querySelectorAll('#product-variant-data [data-variant-id]')).map(function (node) {
-      return {
-        id: node.dataset.variantId,
-        options: JSON.parse(node.dataset.options),
-        price: node.dataset.price,
-        available: node.dataset.available === 'true',
-        full: node.dataset.full,
-        zoom: node.dataset.zoom
-      };
-    });
-    const variantInput = page.querySelector('#variant-id');
-    const price = page.querySelector('#product-price');
-    const image = page.querySelector('#main-product-image');
-    const imageLink = page.querySelector('#main-image-link');
-    const colorText = page.querySelector('#selected-color-text');
-    const addButton = page.querySelector('button[type="submit"]');
-
-    function selectedOptions() {
-      return selectors.map(function (selector) { return selector.value; });
-    }
-
-    function selectVariant(preferredSwatch) {
-      const options = selectedOptions();
-      const variant = variants.find(function (item) {
-        return item.options.every(function (value, index) { return value === options[index]; });
-      });
-      const colorSelector = selectors.find(function (selector) {
-        return preferredSwatch && selector.dataset.optionPosition === preferredSwatch.dataset.optionPosition;
-      }) || selectors.find(function (selector) {
-        return swatches[0] && selector.dataset.optionPosition === swatches[0].dataset.optionPosition;
-      });
-
-      swatches.forEach(function (swatch) {
-        const active = colorSelector && swatch.dataset.colorValue === colorSelector.value;
-        swatch.classList.toggle('is-selected', active);
-        swatch.setAttribute('aria-pressed', active ? 'true' : 'false');
-      });
-      if (colorText && colorSelector) colorText.textContent = colorSelector.value;
-
-      if (!variant) {
-        if (addButton) {
-          addButton.disabled = true;
-          addButton.textContent = 'Unavailable';
-        }
-        return;
-      }
-
-      variantInput.value = variant.id;
-      price.textContent = variant.price;
-      if (addButton) {
-        addButton.disabled = !variant.available;
-        addButton.textContent = variant.available ? 'Add to Cart' : 'Sold Out';
-      }
-
-      const activeSwatch = swatches.find(function (swatch) { return swatch.classList.contains('is-selected'); });
-      const full = variant.full || (activeSwatch && activeSwatch.dataset.full);
-      const zoom = variant.zoom || (activeSwatch && activeSwatch.dataset.zoom);
-      if (full && image) image.src = full;
-      if (zoom && imageLink) imageLink.href = zoom;
-      window.history.replaceState({}, '', window.location.pathname + '?variant=' + variant.id);
-    }
-
-    swatches.forEach(function (swatch) {
-      swatch.addEventListener('click', function () {
-        const selector = selectors.find(function (item) {
-          return item.dataset.optionPosition === swatch.dataset.optionPosition;
-        });
-        if (!selector) return;
-        selector.value = swatch.dataset.colorValue;
-        selector.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-    });
-    selectors.forEach(function (selector) {
-      selector.addEventListener('change', function () { selectVariant(); });
-    });
-    selectVariant();
-  });
-</script>
