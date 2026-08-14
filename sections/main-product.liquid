@@ -54,9 +54,17 @@
         {{ product.title }}
       </h1>
 
+      {% assign selected_color = '' %}
+      {% for option in product.options_with_values %}
+        {% assign option_name = option.name | downcase %}
+        {% if option_name == 'color' %}
+          {% assign selected_color = option.selected_value %}
+        {% endif %}
+      {% endfor %}
+
       <!-- 🎯 Dynamic color output -->
       <p id="selected-color-text" style="font-size: 14px; font-weight: bold; text-transform: uppercase; margin: 0;">
-        {{ product.selected_or_first_available_variant.option1 }}
+        {{ selected_color }}
       </p>
 
       <p id="product-price" style="font-size: 16px; font-weight: bold; margin: 5px 0;">
@@ -77,7 +85,7 @@
               <label style="font-size: 12px;">{{ option.name }}</label>
               <select class="single-option-selector" name="options[{{ option.name }}]">
                 {% for value in option.values %}
-                  <option value="{{ value }}">{{ value }}</option>
+                  <option value="{{ value }}"{% if option.selected_value == value %} selected{% endif %}>{{ value }}</option>
                 {% endfor %}
               </select>
             </div>
