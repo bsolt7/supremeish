@@ -1,0 +1,17 @@
+<button
+  type="button"
+  class="thumbnail{% if is_active %} is-active{% endif %}"
+  data-option-index="{{ option_index }}"
+  data-option-value="{{ option_value | escape }}"
+  data-media-id="{{ media.id }}"
+  data-full="{{ media.preview_image | image_url: width: 800 }}"
+  data-zoom="{{ media.preview_image | image_url: width: 1600 }}"
+  aria-label="View {{ option_name | escape }} {{ option_value | escape }} image"
+  aria-pressed="{% if is_active %}true{% else %}false{% endif %}">
+  <img
+    src="{{ media.preview_image | image_url: width: 160, height: 160, crop: 'center' }}"
+    alt="{{ media.alt | default: option_value | escape }}"
+    width="72"
+    height="72"
+    loading="lazy">
+</button>
