@@ -57,7 +57,6 @@
         <div class="product-thumbnails" aria-label="{{ thumbnail_option_name | escape }} images">
           {% for option_value in product.options_with_values[thumbnail_option_index].values %}
             <div class="thumbnail-column" data-option-value="{{ option_value | escape }}">
-              <span class="thumbnail-column-label">{{ option_value }}</span>
               {% assign rendered_media_ids = '|' %}
               {% assign rendered_media_count = 0 %}
 
@@ -75,8 +74,14 @@
               {% assign normalized_option_value = option_value | downcase | strip %}
               {% for media in product.media %}
                 {% assign normalized_media_alt = media.alt | downcase | strip %}
+                {% comment %}
+                  Associate any number of media items with a style by starting their alt text
+                  with the option value. A pipe permits an accessible description, for example
+                  "Black | Back view"; alt text containing only "Black" remains supported.
+                {% endcomment %}
+                {% assign media_style_tag = normalized_media_alt | split: '|' | first | strip %}
                 {% assign media_token = media.id | append: '|' | prepend: '|' %}
-                {% if normalized_media_alt == normalized_option_value %}
+                {% if media_style_tag == normalized_option_value %}
                   {% unless rendered_media_ids contains media_token %}
                     {% assign rendered_media_ids = rendered_media_ids | append: media.id | append: '|' %}
                     {% assign rendered_media_count = rendered_media_count | plus: 1 %}

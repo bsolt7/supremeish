@@ -202,15 +202,6 @@ a {
   gap: 9px;
 }
 
-.thumbnail-column-label {
-  overflow: hidden;
-  font-size: 10px;
-  text-align: center;
-  text-overflow: ellipsis;
-  text-transform: lowercase;
-  white-space: nowrap;
-}
-
 .thumbnail {
   box-sizing: border-box;
   width: 64px;
