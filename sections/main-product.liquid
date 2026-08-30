@@ -1,159 +1,94 @@
-<section class="product-page" style="max-width: 1200px; margin: 40px auto; padding: 20px; display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 40px;">
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign current_media = current_variant.featured_media | default: product.featured_media %}
+{% assign thumbnail_option_index = 0 %}
+{% assign thumbnail_option_name = product.options_with_values.first.name %}
+{% for option in product.options_with_values %}
+  {% assign normalized_option_name = option.name | downcase %}
+  {% if normalized_option_name == 'color' or normalized_option_name == 'colour' or normalized_option_name == 'style' %}
+    {% assign thumbnail_option_index = forloop.index0 %}
+    {% assign thumbnail_option_name = option.name %}
+    {% break %}
+  {% endif %}
+{% endfor %}
 
-  <!-- LEFT: Big Product Image -->
-  <div class="product-left" style="flex: 0 0 50%; display: flex; justify-content: center;">
-    <div class="zoom-wrapper" style="position: relative; max-width: 500px;">
-      <a id="main-image-link" href="{{ product.selected_or_first_available_variant.featured_media | image_url: width: 1600 }}" data-lightbox="product-images">
-        <img 
-          id="main-product-image"
-          src="{{ product.selected_or_first_available_variant.featured_media | image_url: width: 800 }}"
-          alt="{{ product.title | escape }}"
-          class="zoom-image"
-          style="width: 100%; height: auto;" />
-      </a>
+<section class="product-page">
+  <div class="product-left">
+    <div class="product-gallery">
+      <div class="zoom-wrapper">
+        <a id="main-image-link" href="{{ current_media.preview_image | image_url: width: 1600 }}" data-lightbox="product-images">
+          <img
+            id="main-product-image"
+            src="{{ current_media.preview_image | image_url: width: 800 }}"
+            alt="{{ current_media.alt | default: product.title | escape }}"
+            class="zoom-image"
+            width="800"
+            height="{{ 800 | divided_by: current_media.preview_image.aspect_ratio | round }}">
+        </a>
+      </div>
+
+      <div class="product-thumbnails" aria-label="{{ thumbnail_option_name | escape }} options">
+        {% assign handled_values = '|' %}
+        {% for variant in product.variants %}
+          {% assign option_value = variant.options[thumbnail_option_index] %}
+          {% assign value_token = option_value | append: '|' | prepend: '|' %}
+          {% unless handled_values contains value_token %}
+            {% assign handled_values = handled_values | append: option_value | append: '|' %}
+            {% assign variant_media = variant.featured_media | default: current_media %}
+            <button
+              type="button"
+              class="thumbnail{% if current_variant.options[thumbnail_option_index] == option_value %} is-active{% endif %}"
+              data-option-index="{{ thumbnail_option_index }}"
+              data-option-value="{{ option_value | escape }}"
+              data-variant-id="{{ variant.id }}"
+              data-full="{{ variant_media.preview_image | image_url: width: 800 }}"
+              data-zoom="{{ variant_media.preview_image | image_url: width: 1600 }}"
+              aria-label="Select {{ thumbnail_option_name | escape }}: {{ option_value | escape }}"
+              aria-pressed="{% if current_variant.options[thumbnail_option_index] == option_value %}true{% else %}false{% endif %}">
+              <img
+                src="{{ variant_media.preview_image | image_url: width: 160, height: 160, crop: 'center' }}"
+                alt="{{ option_value | escape }}"
+                width="72"
+                height="72"
+                loading="lazy">
+            </button>
+          {% endunless %}
+        {% endfor %}
+      </div>
     </div>
   </div>
 
-  <!-- RIGHT: Thumbnails + Info -->
-  <div class="product-right" style="flex: 0 0 50%; display: flex; flex-direction: row; gap: 20px;">
+  <div class="product-right">
+    <div class="product-info">
+      <h1>{{ product.title }}</h1>
 
-    <!-- Thumbnails -->
-    <div class="product-thumbnails" style="display: flex; flex-direction: column; gap: 10px;">
-      {% assign handled_colors = '' %}
-      {% for option in product.options_with_values %}
-        {% if option.name == 'Color' %}
-          {% for value in option.values %}
-            {% unless handled_colors contains value %}
-              {% assign handled_colors = handled_colors | append: value | append: ',' %}
-              <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px;">
-                {% assign color_handle = value | handleize %}
-                {% for media in product.media %}
-                  {% assign media_handle = media.src | split: '/' | last | remove: '.jpg' | remove: '.png' | remove: '.jpeg' | handleize %}
-                  {% if media_handle contains color_handle %}
-                    <img 
-                      src="{{ media.preview_image | image_url: width: 150 }}"
-                      data-full="{{ media.preview_image | image_url: width: 800 }}"
-                      data-zoom="{{ media.preview_image | image_url: width: 1600 }}"
-                      data-color="{{ value }}"
-                      class="thumbnail"
-                      alt="{{ value }}"
-                      style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" />
-                  {% endif %}
-                {% endfor %}
-              </div>
-            {% endunless %}
-          {% endfor %}
-        {% endif %}
-      {% endfor %}
-    </div>
+      <p id="selected-color-text">{{ current_variant.options[thumbnail_option_index] }}</p>
+      <p id="product-price">{{ current_variant.price | money }}</p>
 
-    <!-- Product Info -->
-    <div class="product-info" style="display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
-
-      <h1 style="font-size: 22px; font-weight: 600; margin: 0; text-transform: uppercase;">
-        {{ product.title }}
-      </h1>
-
-      {% assign selected_color = '' %}
-      {% for option in product.options_with_values %}
-        {% assign option_name = option.name | downcase %}
-        {% if option_name == 'color' %}
-          {% assign selected_color = option.selected_value %}
-        {% endif %}
-      {% endfor %}
-
-      <!-- 🎯 Dynamic color output -->
-      <p id="selected-color-text" style="font-size: 14px; font-weight: bold; text-transform: uppercase; margin: 0;">
-        {{ selected_color }}
-      </p>
-
-      <p id="product-price" style="font-size: 16px; font-weight: bold; margin: 5px 0;">
-        {{ product.selected_or_first_available_variant.price | money }}
-      </p>
-
-      <div style="font-size: 12px; color: #000000;">
-        {{ product.description }}
-      </div>
+      <div class="product-description">{{ product.description }}</div>
 
       {% form 'product', product %}
-        <input type="hidden" name="id" id="variant-id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="id" id="variant-id" value="{{ current_variant.id }}">
 
-        <!-- Dropdowns -->
-        <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="product-options">
           {% for option in product.options_with_values %}
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
-              <label style="font-size: 12px;">{{ option.name }}</label>
-              <select class="single-option-selector" name="options[{{ option.name }}]">
+            <div class="product-option">
+              <label for="ProductOption-{{ section.id }}-{{ forloop.index0 }}">{{ option.name }}</label>
+              <select id="ProductOption-{{ section.id }}-{{ forloop.index0 }}" class="single-option-selector" name="options[{{ option.name }}]">
                 {% for value in option.values %}
-                  <option value="{{ value }}"{% if option.selected_value == value %} selected{% endif %}>{{ value }}</option>
+                  <option value="{{ value | escape }}"{% if option.selected_value == value %} selected{% endif %}>{{ value }}</option>
                 {% endfor %}
               </select>
             </div>
           {% endfor %}
         </div>
 
-        <!-- Buttons -->
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-          <button type="submit" class="product-button" style="flex: 1;">Add to Cart</button>
-          <a href="/collections/all" class="product-button" style="flex: 1;">Keep Shopping</a>
+        <div class="product-actions">
+          <button type="submit" class="product-button">Add to Cart</button>
+          <a href="/collections/all" class="product-button">Keep Shopping</a>
         </div>
-
       {% endform %}
-
     </div>
-
   </div>
-
 </section>
 
-<!-- 🛒 Sticky Cart -->
 {% render 'sticky-cart' %}
-
-<!-- Local Styles -->
-<style>
-/* Product Buttons */
-.product-button {
-  background: black;
-  color: white;
-  text-transform: uppercase;
-  padding: 12px 0;
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-decoration: none;
-  border: 1px solid black;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-.product-button:hover {
-  background: white;
-  color: black;
-  border: 1px solid black;
-}
-
-/* Custom Dropdown */
-.single-option-selector {
-  width: 150px;
-  padding: 8px 10px;
-  font-size: 13px;
-  border: 1px solid black;
-  border-radius: 4px;
-  background: transparent;
-  font-family: Courier, monospace;
-  text-transform: lowercase;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.single-option-selector:hover {
-  background-color: black;
-  color: white;
-}
-</style>

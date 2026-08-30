@@ -85,13 +85,15 @@
         const variantSelects = document.querySelectorAll('select[name^="options"]');
         const priceElement = document.getElementById('product-price');
         const idInput = document.getElementById('variant-id');
-        const selectedColor = document.getElementById('selected-color-text');
+        const selectedStyle = document.getElementById('selected-color-text');
         const productData = JSON.parse(document.getElementById('ProductJson-{{ product.id }}').textContent);
         const variantMedia = JSON.parse(document.getElementById('VariantMediaJson-{{ product.id }}').textContent);
         const colorSelect = Array.from(variantSelects).find(select =>
           select.name.replace(/^options\[|\]$/g, '').toLowerCase() === 'color'
         );
         const otherSelects = [...variantSelects].filter(s => s !== colorSelect);
+        const thumbnailOptionIndex = thumbnails[0] ? Number(thumbnails[0].dataset.optionIndex) : -1;
+        const thumbnailSelect = thumbnailOptionIndex >= 0 ? variantSelects[thumbnailOptionIndex] : null;
         const wrapper = document.querySelector('.zoom-wrapper');
         const zoomImage = document.querySelector('.zoom-image');
 
@@ -100,6 +102,14 @@
           const selected = Array.from(variantSelects).map(s => s.value.trim());
           return productData.variants.find(v => v.options.every((o,i) => o === selected[i]));
         }
+        function updateActiveThumbnail() {
+          const selectedValue = thumbnailSelect ? thumbnailSelect.value : '';
+          thumbnails.forEach(thumb => {
+            const active = thumb.dataset.optionValue === selectedValue;
+            thumb.classList.toggle('is-active', active);
+            thumb.setAttribute('aria-pressed', String(active));
+          });
+        }
         function updateVariant() {
           const match = findMatchingVariant();
           if (match) {
@@ -107,12 +117,13 @@
             idInput.value = match.id;
             updateImageForVariant(match);
           }
-          updateColorName();
+          updateSelectedStyleName();
+          updateActiveThumbnail();
         }
-        function updateColorName(){ if(selectedColor && colorSelect) selectedColor.textContent = colorSelect.value; }
-        function updateImageByColor(val){
+        function updateSelectedStyleName(){ if(selectedStyle && thumbnailSelect) selectedStyle.textContent = thumbnailSelect.value; }
+        function updateImageByStyle(val){
           if(!val) return;
-          const thumb = Array.from(thumbnails).find(t => t.dataset.color && t.dataset.color.toLowerCase().trim() === val.toLowerCase().trim());
+          const thumb = Array.from(thumbnails).find(t => t.dataset.optionValue === val);
           if(thumb){
             mainImage.src = thumb.dataset.full;
             mainImageLink.href = thumb.dataset.zoom;
@@ -125,21 +136,17 @@
             mainImageLink.href = media.zoom;
             return;
           }
-          updateImageByColor(colorSelect && colorSelect.value);
+          updateImageByStyle(thumbnailSelect && thumbnailSelect.value);
         }
 
         thumbnails.forEach(t => t.addEventListener('click', function(){
-          mainImage.src = t.dataset.full;
-          mainImageLink.href = t.dataset.zoom;
-          const col = t.dataset.color;
-          if(colorSelect && col) {
-            [...colorSelect.options].forEach((o,i) => {
-              if(o.value.toLowerCase().trim() === col.toLowerCase().trim()){
-                colorSelect.selectedIndex = i;
-                colorSelect.dispatchEvent(new Event('change',{bubbles:true}));
-              }
-            });
-            updateColorName();
+          const optionSelect = variantSelects[Number(t.dataset.optionIndex)];
+          if (optionSelect) {
+            optionSelect.value = t.dataset.optionValue;
+            optionSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          } else {
+            mainImage.src = t.dataset.full;
+            mainImageLink.href = t.dataset.zoom;
           }
         }));
 
