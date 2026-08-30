@@ -143,12 +143,9 @@ a {
   }
 }
 
-/* ============================
-   🔍 Product Zoom
-============================ */
+/* Product image */
 #main-product-image {
-  transition: transform 0.3s ease;
-  cursor: zoom-in;
+  cursor: pointer;
 }
 
 .zoom-wrapper {
@@ -161,13 +158,6 @@ a {
 .zoom-image {
   width: 100%;
   height: auto;
-  transition: transform 1.2s ease;
-  transform-origin: center center;
-}
-
-.zoom-wrapper:hover .zoom-image {
-  transform: scale(1.8);
-  cursor: none;
 }
 
 /* Product page */
@@ -196,10 +186,29 @@ a {
 }
 
 .product-thumbnails {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 64px;
   gap: 9px;
   margin-top: 14px;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.thumbnail-column {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.thumbnail-column-label {
+  overflow: hidden;
+  font-size: 10px;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-transform: lowercase;
+  white-space: nowrap;
 }
 
 .thumbnail {
@@ -290,16 +299,6 @@ body:has(.product-page) .collection-grid-wrapper {
   max-height: none;
   overflow: visible;
   padding-right: 0;
-}
-
-@media (hover: none) {
-  #main-product-image {
-    cursor: auto;
-  }
-  .zoom-wrapper:hover .zoom-image {
-    transform: none;
-    cursor: auto;
-  }
 }
 
 /* ============================

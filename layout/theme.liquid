@@ -94,8 +94,6 @@
         const otherSelects = [...variantSelects].filter(s => s !== colorSelect);
         const thumbnailOptionIndex = thumbnails[0] ? Number(thumbnails[0].dataset.optionIndex) : -1;
         const thumbnailSelect = thumbnailOptionIndex >= 0 ? variantSelects[thumbnailOptionIndex] : null;
-        const wrapper = document.querySelector('.zoom-wrapper');
-        const zoomImage = document.querySelector('.zoom-image');
 
         function formatMoney(cents) { return '$' + (cents / 100).toFixed(2); }
         function findMatchingVariant() {
@@ -103,9 +101,17 @@
           return productData.variants.find(v => v.options.every((o,i) => o === selected[i]));
         }
         function updateActiveThumbnail() {
-          const selectedValue = thumbnailSelect ? thumbnailSelect.value : '';
+          if (!thumbnailSelect) return;
+          const selectedThumbnails = Array.from(thumbnails).filter(
+            thumb => thumb.dataset.optionValue === thumbnailSelect.value
+          );
+          const displayedImageUrl = new URL(mainImage.src, window.location.href).href;
+          const matchingThumbnail = selectedThumbnails.find(
+            thumb => new URL(thumb.dataset.full, window.location.href).href === displayedImageUrl
+          ) || selectedThumbnails[0];
+
           thumbnails.forEach(thumb => {
-            const active = thumb.dataset.optionValue === selectedValue;
+            const active = thumb === matchingThumbnail;
             thumb.classList.toggle('is-active', active);
             thumb.setAttribute('aria-pressed', String(active));
           });
@@ -144,10 +150,14 @@
           if (optionSelect) {
             optionSelect.value = t.dataset.optionValue;
             optionSelect.dispatchEvent(new Event('change', { bubbles: true }));
-          } else {
-            mainImage.src = t.dataset.full;
-            mainImageLink.href = t.dataset.zoom;
           }
+          thumbnails.forEach(thumb => {
+            const active = thumb === t;
+            thumb.classList.toggle('is-active', active);
+            thumb.setAttribute('aria-pressed', String(active));
+          });
+          mainImage.src = t.dataset.full;
+          mainImageLink.href = t.dataset.zoom;
         }));
 
         otherSelects.forEach(s => s.addEventListener('change', updateVariant));
@@ -158,15 +168,6 @@
           });
         }
 
-        if(wrapper && zoomImage && window.matchMedia('(hover: hover)').matches) {
-          wrapper.addEventListener('mousemove', e => {
-            const rect = wrapper.getBoundingClientRect();
-            const x = ((e.clientX - rect.left)/rect.width)*100;
-            const y = ((e.clientY - rect.top)/rect.height)*100;
-            zoomImage.style.transformOrigin = `${x}% ${y}%`;
-          });
-          wrapper.addEventListener('mouseleave', () => zoomImage.style.transformOrigin = 'center center');
-        }
         updateVariant();
       });
     </script>

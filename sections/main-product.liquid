@@ -26,34 +26,6 @@
         </a>
       </div>
 
-      <div class="product-thumbnails" aria-label="{{ thumbnail_option_name | escape }} options">
-        {% assign handled_values = '|' %}
-        {% for variant in product.variants %}
-          {% assign option_value = variant.options[thumbnail_option_index] %}
-          {% assign value_token = option_value | append: '|' | prepend: '|' %}
-          {% unless handled_values contains value_token %}
-            {% assign handled_values = handled_values | append: option_value | append: '|' %}
-            {% assign variant_media = variant.featured_media | default: current_media %}
-            <button
-              type="button"
-              class="thumbnail{% if current_variant.options[thumbnail_option_index] == option_value %} is-active{% endif %}"
-              data-option-index="{{ thumbnail_option_index }}"
-              data-option-value="{{ option_value | escape }}"
-              data-variant-id="{{ variant.id }}"
-              data-full="{{ variant_media.preview_image | image_url: width: 800 }}"
-              data-zoom="{{ variant_media.preview_image | image_url: width: 1600 }}"
-              aria-label="Select {{ thumbnail_option_name | escape }}: {{ option_value | escape }}"
-              aria-pressed="{% if current_variant.options[thumbnail_option_index] == option_value %}true{% else %}false{% endif %}">
-              <img
-                src="{{ variant_media.preview_image | image_url: width: 160, height: 160, crop: 'center' }}"
-                alt="{{ option_value | escape }}"
-                width="72"
-                height="72"
-                loading="lazy">
-            </button>
-          {% endunless %}
-        {% endfor %}
-      </div>
     </div>
   </div>
 
@@ -78,6 +50,44 @@
                   <option value="{{ value | escape }}"{% if option.selected_value == value %} selected{% endif %}>{{ value }}</option>
                 {% endfor %}
               </select>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="product-thumbnails" aria-label="{{ thumbnail_option_name | escape }} images">
+          {% for option_value in product.options_with_values[thumbnail_option_index].values %}
+            <div class="thumbnail-column" data-option-value="{{ option_value | escape }}">
+              <span class="thumbnail-column-label">{{ option_value }}</span>
+              {% assign rendered_media_ids = '|' %}
+              {% assign rendered_media_count = 0 %}
+
+              {% for variant in product.variants %}
+                {% if variant.options[thumbnail_option_index] == option_value and variant.featured_media %}
+                  {% assign media_token = variant.featured_media.id | append: '|' | prepend: '|' %}
+                  {% unless rendered_media_ids contains media_token %}
+                    {% assign rendered_media_ids = rendered_media_ids | append: variant.featured_media.id | append: '|' %}
+                    {% assign rendered_media_count = rendered_media_count | plus: 1 %}
+                    {% render 'product-thumbnail', media: variant.featured_media, option_value: option_value, option_name: thumbnail_option_name, option_index: thumbnail_option_index, is_active: false %}
+                  {% endunless %}
+                {% endif %}
+              {% endfor %}
+
+              {% assign normalized_option_value = option_value | downcase | strip %}
+              {% for media in product.media %}
+                {% assign normalized_media_alt = media.alt | downcase | strip %}
+                {% assign media_token = media.id | append: '|' | prepend: '|' %}
+                {% if normalized_media_alt == normalized_option_value %}
+                  {% unless rendered_media_ids contains media_token %}
+                    {% assign rendered_media_ids = rendered_media_ids | append: media.id | append: '|' %}
+                    {% assign rendered_media_count = rendered_media_count | plus: 1 %}
+                    {% render 'product-thumbnail', media: media, option_value: option_value, option_name: thumbnail_option_name, option_index: thumbnail_option_index, is_active: false %}
+                  {% endunless %}
+                {% endif %}
+              {% endfor %}
+
+              {% if rendered_media_count == 0 %}
+                {% render 'product-thumbnail', media: current_media, option_value: option_value, option_name: thumbnail_option_name, option_index: thumbnail_option_index, is_active: false %}
+              {% endif %}
             </div>
           {% endfor %}
         </div>
