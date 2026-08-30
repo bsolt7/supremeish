@@ -72,7 +72,8 @@
         {% for variant in product.variants %}
           "{{ variant.id }}": {% if variant.featured_media %}{
             "image": {{ variant.featured_media.preview_image | image_url: width: 800 | json }},
-            "zoom": {{ variant.featured_media.preview_image | image_url: width: 1600 | json }}
+            "zoom": {{ variant.featured_media.preview_image | image_url: width: 1600 | json }},
+            "alt": {{ variant.featured_media.alt | default: product.title | json }}
           }{% else %}null{% endif %}{% unless forloop.last %},{% endunless %}
         {% endfor %}
       }
@@ -132,6 +133,7 @@
           const thumb = Array.from(thumbnails).find(t => t.dataset.optionValue === val);
           if(thumb){
             mainImage.src = thumb.dataset.full;
+            mainImage.alt = thumb.dataset.alt;
             mainImageLink.href = thumb.dataset.zoom;
           }
         }
@@ -139,6 +141,7 @@
           const media = variantMedia[String(variant.id)];
           if (media) {
             mainImage.src = media.image;
+            mainImage.alt = media.alt;
             mainImageLink.href = media.zoom;
             return;
           }
@@ -157,6 +160,7 @@
             thumb.setAttribute('aria-pressed', String(active));
           });
           mainImage.src = t.dataset.full;
+          mainImage.alt = t.dataset.alt;
           mainImageLink.href = t.dataset.zoom;
         }));
 

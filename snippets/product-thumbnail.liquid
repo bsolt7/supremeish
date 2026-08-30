@@ -6,6 +6,7 @@
   data-media-id="{{ media.id }}"
   data-full="{{ media.preview_image | image_url: width: 800 }}"
   data-zoom="{{ media.preview_image | image_url: width: 1600 }}"
+  data-alt="{{ media.alt | default: option_value | escape }}"
   aria-label="View {{ option_name | escape }} {{ option_value | escape }} image"
   aria-pressed="{% if is_active %}true{% else %}false{% endif %}">
   <img
